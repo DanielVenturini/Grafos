@@ -29,6 +29,26 @@ public class Grafo{
 	grafo.put(vertice, new ArrayList<>());
     }
 
+    public boolean removeVertice(String vertice){
+
+        if(grafo.containsKey(vertice)){
+
+            if(grafo.containsValue(vertice)){
+
+                String[] mapped = keys();
+
+                for(String value : mapped){
+                    removeAresta(vertice, value);
+                }
+            }
+
+            grafo.remove(vertice);
+            return true;
+        }
+
+       return false; 
+    }
+
     public boolean addAresta(String v1, String v2){
         if(!grafo.containsKey(v1)){
             return false;
@@ -46,6 +66,21 @@ public class Grafo{
 	grafo.get(v2).add(v1);
 	
         return true;
+    }
+
+    public boolean removeAresta(String v1, String v2){
+
+        if(!grafo.containsKey(v1)){
+            return false;
+        }
+
+        if(grafo.get(v1).contains(v2)){
+            grafo.get(v1).remove(v2);
+            grafo.get(v2).remove(v1);
+            return true;
+        }
+
+        return false;
     }
 
     public void print(){

@@ -18,9 +18,34 @@ public class Principal{
 
 	public static void main(String[] args) throws FileNotFoundException{
 
-            new Erdos();
-            System.out.println("");
-            new TransmissaoDeEnergia();
+            //new Erdos();
+            //System.out.println("");
+            //new TransmissaoDeEnergia();
+            
+            Grafo g = new Grafo();
+
+        	g.addVertice("r");
+		g.addVertice("s");
+		g.addVertice("t");
+		g.addVertice("u");
+		g.addVertice("x");
+		g.addVertice("v");
+		g.addVertice("y");
+		g.addVertice("w");
+
+		g.addAresta("r", "v");
+		g.addAresta("r", "s");
+		g.addAresta("s", "w");
+		g.addAresta("t", "u");
+		g.addAresta("t", "w");
+		g.addAresta("t", "x");
+		g.addAresta("w", "x");
+		g.addAresta("x", "y");
+		g.addAresta("y", "u");
+                
+                g.removeVertice("y");
+
+		g.print();
 
 	}
 
