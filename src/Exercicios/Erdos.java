@@ -8,6 +8,7 @@ package Exercicios;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 import Principal.Grafo;
+import Principal.Vertice;
 
 /**
  *
@@ -52,12 +53,12 @@ public class Erdos{
                     System.out.println("Teste " + teste ++);
                     printErdos();
                     ctn = false;
-                    
+
                         if(Integer.parseInt(s) < 1 || Integer.parseInt(s) > 100){
                             System.out.println("Quantidade de artigos nao permitido.");
                             return;
                         }
-                    
+
                     g = new Grafo();
                     continue;
                 }
@@ -93,14 +94,16 @@ public class Erdos{
     }
 
     private void printErdos(){
+        //g.print();
 
-        for(String s : g.keys()){
-            if(s.equals("P. Erdos")){
+        for(Vertice s : g.getGrafo().keySet()){
+            if(s.getId().equals("P. Erdos")){
                 continue;
             }
 
-            int num = g.buscaLargura("P. Erdos", s);
-            System.out.println(s + ": " + (num == -1 ? "infinito." : num));
+            int num = g.buscaLargura("P. Erdos", s.getId());
+            System.out.println(s.getId() + ": " + (num == -1 ? "infinito." : num));
         }
+        System.out.println("");
     }
 }

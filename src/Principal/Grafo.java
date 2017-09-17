@@ -15,68 +15,86 @@ import java.util.HashMap;
  */
 public class Grafo{
 
-    HashMap<String, ArrayList<String>> grafo;
+    HashMap<Vertice, ArrayList<Vertice>> grafo;
 
         public Grafo(){
             grafo = new HashMap<>();
 	}
 
-    public HashMap getGrafo(){
+    public HashMap<Vertice, ArrayList<Vertice>> getGrafo(){
         return grafo;
     }
 
-    public void addVertice(String vertice){
-	grafo.put(vertice, new ArrayList<>());
-    }
-
-    public boolean removeVertice(String vertice){
-
-        if(grafo.containsKey(vertice)){
-
-            if(grafo.containsValue(vertice)){
-
-                String[] mapped = keys();
-
-                for(String value : mapped){
-                    removeAresta(vertice, value);
-                }
+    private Vertice get(String vertice){
+        for(Vertice v : grafo.keySet()){
+            if(v.getId().equals(vertice)){
+                return v;
             }
-
-            grafo.remove(vertice);
-            return true;
         }
-
-       return false; 
+        return null;
     }
+
+    public void addVertice(String vertice){
+        if(get(vertice) != null){
+            return;
+        }
+	grafo.put(new Vertice(vertice), new ArrayList<>());
+    }
+
+//    public boolean removeVertice(String vertice){
+//
+//        if(grafo.containsKey(vertice)){
+//
+//            if(grafo.containsValue(vertice)){
+//
+//                String[] mapped = keys();
+//
+//                for(String value : mapped){
+//                    removeAresta(vertice, value);
+//                }
+//            }
+//
+//            grafo.remove(vertice);
+//            return true;
+//        }
+//
+//       return false; 
+//    }
 
     public boolean addAresta(String v1, String v2){
-        if(!grafo.containsKey(v1)){
-            return false;
-	}
-		
-        if(!grafo.containsKey(v2)){
+        
+        Vertice v = get(v1);
+        if(v1 == null){
             return false;
 	}
 
-	if(grafo.get(v1).contains(v2)){
+        Vertice vv = get(v2);
+        if(vv == null){
+            return false;
+	}
+
+	if(grafo.get(v).contains(vv)){
             return false;
         }
 
-        grafo.get(v1).add(v2);
-	grafo.get(v2).add(v1);
-	
+        grafo.get(v).add(vv);
+	grafo.get(vv).add(v);
+
         return true;
     }
 
     public boolean removeAresta(String v1, String v2){
 
-        if(!grafo.containsKey(v1)){
+        Vertice v = get(v1);
+        Vertice vv= get(v2);
+
+        if(v == null){
             return false;
         }
 
-        if(grafo.get(v1).contains(v2)){
-            grafo.get(v1).remove(v2);
-            grafo.get(v2).remove(v1);
+        if(grafo.get(v).contains(vv)){
+            grafo.get(v).remove(vv);
+            grafo.get(vv).remove(v);
             return true;
         }
 
@@ -84,71 +102,61 @@ public class Grafo{
     }
 
     public void print(){
-        for(String key : grafo.keySet()){
-            System.out.println(key + " -> " + grafo.get(key).toString());
+        for(Vertice key : grafo.keySet()){
+            System.out.print(key.getId() + " -> [ ");
+            for(Vertice v : grafo.get(key)){
+                System.out.print(v.getId() + " ");
+            }
+            System.out.println("]");
 	}
+        System.out.println("");
     }
 
-    public int buscaLargura(String first, String key){
+    public int buscaLargura(String f, String k){
 
-        int pos = 1;
+        Vertice first = get(f);
+        Vertice key = get(k);
 
-        int[] erdos = new int[grafo.size()];
-        for(int i = 0; i < grafo.size(); i ++){
-            erdos[i] = 0;
-        }
+        first.setDistancia(0);
 
-        HashMap<String, String> cor = new HashMap<>();
-        LinkedList<String> list = new LinkedList<>();
-
-        String[] keys = keys();
-
-        for(String s : keys){
-            cor.put(s, "B");
-        }
+        LinkedList<Vertice> list = new LinkedList<>();
 
         list.add(first);
-        String head;
 
         while(!list.isEmpty()){
 
-            head = list.removeFirst();
+            first = list.removeFirst();
 
-            ArrayList<String> collection = grafo.get(head);
-            erdos[pos] += collection.size();
-            erdos[pos-1] --;
+            ArrayList<Vertice> collection = grafo.get(first);
 
+            first.setCor("P");
 
-            cor.put(head, "P");
+            if(collection.contains(key)){
+                int value = first.getDistancia()+1;
 
-            if(collection.contains(key))
-                return pos;
+                resetColor();
+                return value;
+            }
 
-            if(erdos[pos-1] < 1)
-                pos ++;
+            for(Vertice v : collection){
 
-            for(String str : collection){
-
-                if(cor.get(str).equals("B")){
-                    cor.put(str, "C");
-                    list.addLast(str);
+                if(v.getCor().equals("B")){
+                    v.setDistancia(first.getDistancia()+1);
+                    v.setCor("C");
+                    list.addLast(v);
                 }
             }
         }
 
+        resetColor();
         return -1;
     }
 
-    public String[] keys(){
-        int lenght = grafo.size();
-        String[] keys = new String[lenght];
-        
-        lenght = 0;
-        for(String str : grafo.keySet()){
-            keys[lenght ++] = str;
+    private void resetColor(){
+        for (Vertice vertice : grafo.keySet()) {
+            vertice.setCor("B");
+            vertice.setDistancia(-1);
         }
-
-        return keys;
     }
 
 }

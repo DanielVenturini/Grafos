@@ -47,6 +47,7 @@ public class TransmissaoDeEnergia{
                 System.out.println("Configuracao invalida.");
                 return;
             }
+            System.out.println("Estacoes: " + e + " Linhas: " + l);
 
             while(e > 0){
                 grafo.addVertice(String.valueOf(e));
@@ -58,17 +59,20 @@ public class TransmissaoDeEnergia{
                 l --;
             }
 
+            grafo.print();
             testeLigacoes();
+
+            grafo = new Grafo();
         }
     }
 
     public void testeLigacoes(){
-        
+
         System.out.println("Teste " + testeN ++);
 
-        for(int i = 0; i < e; i ++){
-            for(int j = i; j < e; j ++){
-                if(grafo.buscaLargura(String.valueOf(i+1), String.valueOf(j+1)) == -1){
+        for(int i = 1; i < e; i ++){
+            for(int j = i+1; j <= e; j ++){
+                if(grafo.buscaLargura(String.valueOf(i), String.valueOf(j)) == -1){
                     System.out.println("falha");
                     System.out.println("");
                     return;
