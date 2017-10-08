@@ -7,7 +7,7 @@ package Exercicios;
 
 import java.io.FileNotFoundException;
 import java.util.Scanner;
-import Principal.Grafo;
+import Grafo.Grafo;
 
 /**
  *
@@ -25,7 +25,7 @@ public class TransmissaoDeEnergia{
             
             try{
                 testeN = 1;
-                grafo = new Grafo();
+                grafo = new Grafo(true);
                 confGrafos(openArchive.openArchive("energia.txt"));
                 //grafo.print();
             }catch (FileNotFoundException fn) {
@@ -47,7 +47,6 @@ public class TransmissaoDeEnergia{
                 System.out.println("Configuracao invalida.");
                 return;
             }
-            System.out.println("Estacoes: " + e + " Linhas: " + l);
 
             while(e > 0){
                 grafo.addVertice(String.valueOf(e));
@@ -55,14 +54,14 @@ public class TransmissaoDeEnergia{
             }
 
             while(l > 0){
-                grafo.addAresta(arquivo.next(), arquivo.next());
+                grafo.addAresta(arquivo.next(), arquivo.next(), 0);
                 l --;
             }
 
-            grafo.print();
+            //grafo.print();
             testeLigacoes();
 
-            grafo = new Grafo();
+            grafo = new Grafo(true);
         }
     }
 

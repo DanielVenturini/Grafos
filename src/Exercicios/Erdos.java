@@ -7,8 +7,9 @@ package Exercicios;
 
 import java.io.FileNotFoundException;
 import java.util.Scanner;
-import Principal.Grafo;
-import Principal.Vertice;
+import Grafo.Grafo;
+import Grafo.Vertice;
+import Principal.ToGraphviz;
 
 /**
  *
@@ -20,7 +21,7 @@ public class Erdos{
 
         public Erdos() throws FileNotFoundException{
             try{
-                g = new Grafo();
+                g = new Grafo(true);
                 confGrafos(openArchive.openArchive("erdos.txt"));
                 //g.print();
             }catch (FileNotFoundException fn) {
@@ -59,7 +60,7 @@ public class Erdos{
                             return;
                         }
 
-                    g = new Grafo();
+                    g = new Grafo(true);
                     continue;
                 }
 
@@ -72,7 +73,7 @@ public class Erdos{
                     return;
                 }
                 if(s.substring(s.length()-1, s.length()).equals(".")){
-                    adicionaVerticesEArestas(artigo, i+1);
+                    adicionaArestas(artigo, i+1);
                     break;
                 }
             }
@@ -80,15 +81,16 @@ public class Erdos{
         }
     }
 
-    private void adicionaVerticesEArestas(String[] artigo, int length){
-        for(int i = 0; i < length; i ++){
-            if(!g.getGrafo().containsKey(artigo[i]))
-                g.addVertice(artigo[i]);
-        }
+    private void adicionaArestas(String[] artigo, int length){
         
+        if(length == 1){
+            g.addVertice(artigo[0]);
+            return;
+        }
+
         for(int i = 0; i < length; i ++){
             for(int j = i+1; j < length; j ++){
-                g.addAresta(artigo[i], artigo[j]);
+                g.addAresta(artigo[i], artigo[j], 0);
             }
         }
     }

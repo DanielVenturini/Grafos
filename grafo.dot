@@ -1,0 +1,17 @@
+digraph BST {node [fontname="Arial"];c -> b [label="8"];
+c -> i [label="2"];
+c -> f [label="4"];
+c -> d [label="7"];
+d -> c [label="7"];
+d -> e [label="9"];
+g -> f [label="2"];
+g -> h [label="1"];
+f -> c [label="4"];
+f -> g [label="2"];
+e -> d [label="9"];
+a -> b [label="4"];
+b -> a [label="4"];
+b -> c [label="8"];
+i -> c [label="2"];
+h -> g [label="1"];
+}
