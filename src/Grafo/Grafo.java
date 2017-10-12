@@ -25,6 +25,10 @@ public class Grafo{
             tempo = 0;
 	}
 
+    public void setGrafo(HashMap<Vertice, ArrayList<Aresta>> grafo){
+        this.grafo = grafo;
+    }
+
     public HashMap<Vertice, ArrayList<Aresta>> getGrafo(){
         return grafo;
     }
@@ -105,7 +109,7 @@ public class Grafo{
             for(Aresta aresta : collection){        //Vendo se o vertice procurado é adjacente aqui
                 if(aresta.getVerticeAdjacente().getId().equals(k)){
                     int value = first.getDistancia()+1;
-                    resetColor();
+                    resetColor(null);
                     return value;
                 }
             }
@@ -121,7 +125,7 @@ public class Grafo{
             }
         }
 
-        resetColor();
+        resetColor(null);
         return -1;
     }
 
@@ -134,7 +138,7 @@ public class Grafo{
             }
         }
 
-        resetColor();
+        resetColor(null);
         return get(k).getTempo();
     }
 
@@ -173,13 +177,153 @@ public class Grafo{
         return array;
     }
 
-    private void resetColor(){
+    private void resetColor(HashMap<Vertice, ArrayList<Aresta>> hash){  //a hash é do proprío grafo ou não?
+        HashMap<Vertice, ArrayList<Aresta>> grafo = (hash==null?this.grafo:hash);
+
         for (Vertice vertice : grafo.keySet()) {
             vertice.setCor("B");
             vertice.setDistancia(-1);
             vertice.setTempo(0);
-            tempo = 0;
         }
+            tempo = 0;
+    }
+
+    private boolean containsCycle(Vertice root, Vertice adjacente, HashMap<Vertice, ArrayList<Aresta>> mst){
+
+        LinkedList<Vertice> list = new LinkedList<>();
+        root.setCor("C");
+        for (Aresta aresta : mst.get(root)) {
+
+            Vertice vertice = aresta.getVerticeAdjacente();
+
+            if(vertice.equals(adjacente)){
+                continue;
+            }
+
+            vertice.setCor("C");
+            list.add(vertice);
+        }
+
+        while(!list.isEmpty()){
+
+            Vertice vertice = list.removeFirst();
+
+            if(!mst.containsKey(vertice)){  //se o grafo nao estiver mapeando a chave
+                continue;
+            }
+
+            for (Aresta aresta : mst.get(vertice)) {
+                Vertice v = aresta.getVerticeAdjacente();
+
+                if(v.equals(adjacente)){
+                    resetColor(mst);
+                    return true;
+                }
+
+                if(!v.getCor().equals("B")){
+                    continue;
+                }
+
+                v.setCor("C");
+                list.add(v);
+            } 
+        }
+
+        resetColor(mst);
+        return false;
+    }
+
+    private HashMap<Integer, ArrayList<Vertice>> getVectorKruskal(){
+        HashMap<Integer, ArrayList<Vertice>> vector = new HashMap<>();
+
+        for (Vertice vertice : grafo.keySet()) {
+
+            for (Aresta aresta : grafo.get(vertice)) {
+                if(!vector.containsKey(aresta.getPeso())){
+                    vector.put(aresta.getPeso(), new ArrayList<Vertice>());   
+                }
+
+                vector.get(aresta.getPeso()).add(vertice);     //todos os vertices que tem uma aresta com o peso 'i' ficam aqui
+            }
+        }
+
+        for (Integer i : vector.keySet()) {
+            System.out.print(i + " -> [ ");
+            for(Vertice vertice : vector.get(i)){
+                System.out.print(vertice.getId() + " ");
+            }
+            System.out.println("]");
+        }
+
+        return vector;
+    }
+
+    public HashMap<Vertice, ArrayList<Aresta>> kruskal(){
+
+        HashMap<Integer, ArrayList<Vertice>> vector = getVectorKruskal();   //vetor com os pesos das arestas ordenados, ou mais o menos.
+        HashMap<Vertice, ArrayList<Aresta>> mst = new HashMap<>();  //minimal spanning tree
+        HashMap<Vertice, ArrayList<Aresta>> grafo = (HashMap<Vertice, ArrayList<Aresta>>) this.grafo.clone();
+        int qtdArestas = 0;
+        int n = (isGrafo?(2*this.grafo.size()-2):(this.grafo.size()));    //se for um grafo, terá uma aresta a mais para cada vertice adjacente
+
+        for (int i = 0; qtdArestas < n;) {
+
+            if(!vector.containsKey(i)){
+                i ++;
+                continue;
+            }
+
+            for (Vertice vertice1 : vector.get(i)) {                //recuperando todos os vertices que tem aresta com o peso 'i'
+
+                for (Aresta aresta1 : grafo.get(vertice1)) {        //procurando qual aresta do vertice tem o peso 'i'
+
+                    if(aresta1.getPeso() == i){                     //achei a aresta com o peso 'i'
+
+                        Vertice vertice2 = null;
+                        Aresta aresta2 = null;
+                        if(isGrafo){                                //se for um grafo, faremos umas operacoes a mais para o algoritmo funcionar melhor. Dentre elas, a inserção das duas aresta que são mapeadas pelo para de vértices
+                            vertice2 = aresta1.getVerticeAdjacente();   //recuperando o vértice adjacente
+
+                            for (Aresta aresta : grafo.get(vertice2)) { //recuperando a outra aresta
+                                if(aresta.getVerticeAdjacente().equals(vertice1)){
+                                    aresta2 = aresta;
+                                    break;
+                                }
+                            }
+
+                            if(!mst.containsKey(vertice2)){             //mesma coisa para o vértice adjacente
+                                mst.put(vertice2, new ArrayList<>());
+                            }
+
+                            mst.get(vertice2).add(aresta2);             //adicionando a outra aresta
+                        }
+
+                        if(!mst.containsKey(vertice1)){             //se nao tiver um mapeamento para o vertice, então cria
+                            mst.put(vertice1, new ArrayList<>());
+                        }
+
+                        mst.get(vertice1).add(aresta1);             //adicionando a aresta no grafo
+
+                        if(containsCycle(vertice1, vertice2, mst)){ //se criar um ciclo
+                            mst.get(vertice1).remove(aresta1);      //removendo a aresta do grafo
+
+                            if(isGrafo){
+                                mst.get(vertice2).remove(aresta2);      //removendo a outra aresta
+                            }
+                        } else {
+                            qtdArestas += (isGrafo?2:1);
+                        }
+
+                        if(isGrafo){    //se for um grafo, remove a mesma aresta
+                            grafo.get(vertice2).remove(aresta2);
+                        }
+                    }
+                }
+            }
+            i ++;
+        }
+
+        return mst;
     }
 
 }

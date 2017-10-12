@@ -19,39 +19,48 @@ import java.util.HashMap;
  */
 public class ToGraphviz {
 
-        public ToGraphviz(HashMap<Vertice, ArrayList<Aresta>> grafo){
+    public static void toGraphviz(HashMap<Vertice, ArrayList<Aresta>> estrutura, boolean isGrafo){   //pode ser um grafo ou uma arvore
 
             File file;
 
             try{
                 file = abrirArquivo();
-                escrevendoArquivo(new FileWriter(file), grafo);
+                escrevendoArquivo(new FileWriter(file), estrutura, isGrafo);
                 abrirGraphviz();
             } catch (IOException ex) {
-                System.out.println("Arquivo \"grafo.dot\" nao existente.");
+                System.out.println("Erro ao manipular arquivo");
             }
-        }
-
-    public static File abrirArquivo() throws IOException{
-        return new File("grafo.dot");
     }
 
-    public void escrevendoArquivo(FileWriter file, HashMap<Vertice, ArrayList<Aresta>> grafo) throws IOException{
+    private static File abrirArquivo() throws IOException{
+        return new File("execute.dot");
+    }
+
+    private static void escrevendoArquivo(FileWriter file, HashMap<Vertice, ArrayList<Aresta>> grafo, boolean isGrafo) throws IOException{
         file.write("digraph BST {");                //cabeçalho do arquivo .dot
-        file.write("node [fontname=\"Arial\"];");
+        file.write("node [fontname=\"Arial\"];\n");
 
         for (Vertice vertice : grafo.keySet()){
                 for (Aresta aresta : grafo.get(vertice)) {  //aqui tem que colocar o Vertice apontanto para o outro Vertice e o peso: 'a -> b [label="4"];'
 
-                    file.write(vertice.getId() + " -> " + aresta.getVerticeAdjacente().getId() + " [label=\"" + aresta.getPeso() + "\"];\n");
+//                    if(isGrafo){    //como é grafo, nao é bom colocar duas arestas na hora de desenhar no Graphviz
+//                        for (Aresta a : grafo.get(aresta.getVerticeAdjacente())) {
+//                            if(a.getVerticeAdjacente().equals(vertice)){
+//                                grafo.get(aresta.getVerticeAdjacente()).remove(aresta);
+//                            }
+//                        }
+//                    }
+
+                    file.write("    " + vertice.getId() + " -> " + aresta.getVerticeAdjacente().getId() + 
+                               " [" + (isGrafo?"dir=none ": "") + "label=\"" + aresta.getPeso() + "\"];\n");
             }
         }
-        
+
         file.write("}");
         file.close();
     }
 
-    public void abrirGraphviz() throws IOException{
-        Runtime.getRuntime().exec("gvedit grafo.dot");
+    private static void abrirGraphviz() throws IOException{
+        Runtime.getRuntime().exec("gvedit execute.dot");
     }
 }
