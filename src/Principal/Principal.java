@@ -42,10 +42,9 @@ public class Principal{
                 g.addAresta("1", "7", 11);
                 g.addAresta("5", "3", 14);
 
-
-		g.print();
-                //ToGraphviz.toGraphviz(g.getGrafo(), true);
-                ToGraphviz.toGraphviz(g.kruskal(), g.getIsGrafo()); //se for um digrafo, é necessário alterar um parametro no arquivo .dot
+                ToGraphviz.toGraphviz(g.prim(), g.getIsGrafo());
+		//g.print();
+                //ToGraphviz.toGraphviz(g.kruskal(), g.getIsGrafo()); //se for um digrafo, é necessário alterar um parametro no arquivo .dot
                 //costaDoMosquito(g);
 
 	}

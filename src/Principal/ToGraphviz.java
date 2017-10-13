@@ -39,6 +39,8 @@ public class ToGraphviz {
     private static void escrevendoArquivo(FileWriter file, HashMap<Vertice, ArrayList<Aresta>> grafo, boolean isGrafo) throws IOException{
         file.write("digraph BST {");                //cabeçalho do arquivo .dot
         file.write("node [fontname=\"Arial\"];\n");
+        file.write("splines=line\n" +
+                   "splines=false");                //fazendo com que as arestas não sejam curvadas
 
         for (Vertice vertice : grafo.keySet()){
                 for (Aresta aresta : grafo.get(vertice)) {  //aqui tem que colocar o Vertice apontanto para o outro Vertice e o peso: 'a -> b [label="4"];'
@@ -51,7 +53,7 @@ public class ToGraphviz {
 //                        }
 //                    }
 
-                    file.write("    " + vertice.getId() + " -> " + aresta.getVerticeAdjacente().getId() + 
+                    file.write("    " + vertice.getId() + " -> " + aresta.getAdjacente().getId() + 
                                " [" + (isGrafo?"dir=none ": "") + "label=\"" + aresta.getPeso() + "\"];\n");
             }
         }

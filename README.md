@@ -13,7 +13,7 @@ Para a disciplina de Teoria dos Grafos, foi implementada duas
 atividades da Olimpiada de programação: Numero de Erdos e Transmissão
 de Energia.
 
-Tambem está implementado o algoritmo de Kruskal, um dos principais de geração de árvore mínima, mais conhecida como minimal spanning tree, árvore geradora de custo minimo ou árvore de extensão mínima.
+Tambem está implementado os algoritmos de Kruskal e de Prim, um dos principais de geração de árvore mínima, mais conhecida como minimal spanning tree, árvore geradora de custo minimo ou árvore de extensão mínima. Porém, como a árvore mínima pode ter várias para cada grafo, o resultado depende da ordem de inserção dos vértices.
 
 Para quem tem o programa Graphviz instalado, foi adicionado a classe ToGraphviz, que chama este programa e desenho o grafo. Isto é muito bom para podermos ver o grafo como ele está. O programa pode ser baixado aqui: http://www.graphviz.org/pub/graphviz/stable/windows/graphviz-2.38.msi. Depois é necessário colocar o executavel nas Variaveis de Ambiente.
 

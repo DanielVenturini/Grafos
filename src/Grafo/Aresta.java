@@ -11,20 +11,20 @@ package Grafo;
  */
 public class Aresta {
 
-    private Vertice verticeAdjacente;
+    private Vertice adjacente;
     private int peso;
 
     public Aresta(Vertice verticeAdjacente, int peso) {
-        this.verticeAdjacente = verticeAdjacente;
+        this.adjacente = verticeAdjacente;
         this.peso = peso;
     }
 
-    public Vertice getVerticeAdjacente() {
-        return verticeAdjacente;
+    public Vertice getAdjacente() {
+        return adjacente;
     }
 
-    public void setVerticeAdjacente(Vertice verticeAdjacente) {
-        this.verticeAdjacente = verticeAdjacente;
+    public void setAdjacente(Vertice adjacente) {
+        this.adjacente = adjacente;
     }
 
     public int getPeso() {

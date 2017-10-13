@@ -1,10 +1,19 @@
 digraph BST {node [fontname="Arial"];
-    3 -> 2 [dir=none label="5"];
-    5 -> 4 [dir=none label="2"];
-    1 -> 2 [dir=none label="1"];
-    2 -> 1 [dir=none label="1"];
-    2 -> 4 [dir=none label="3"];
-    2 -> 3 [dir=none label="5"];
-    4 -> 5 [dir=none label="2"];
-    4 -> 2 [dir=none label="3"];
+splines=line
+splines=false    2 -> 8 [dir=none label="2"];
+    2 -> 5 [dir=none label="4"];
+    2 -> 3 [dir=none label="7"];
+    2 -> 1 [dir=none label="8"];
+    0 -> 1 [dir=none label="4"];
+    1 -> 0 [dir=none label="4"];
+    1 -> 2 [dir=none label="8"];
+    5 -> 6 [dir=none label="2"];
+    5 -> 2 [dir=none label="4"];
+    4 -> 3 [dir=none label="9"];
+    7 -> 6 [dir=none label="1"];
+    6 -> 7 [dir=none label="1"];
+    6 -> 5 [dir=none label="2"];
+    8 -> 2 [dir=none label="2"];
+    3 -> 2 [dir=none label="7"];
+    3 -> 4 [dir=none label="9"];
 }

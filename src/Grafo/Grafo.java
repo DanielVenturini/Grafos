@@ -84,7 +84,7 @@ public class Grafo{
         for(Vertice key : grafo.keySet()){
             System.out.print(key.getId() + " -> [ ");
             for(Aresta aresta : grafo.get(key)){
-                System.out.print(aresta.getVerticeAdjacente().getId() + " ");
+                System.out.print(aresta.getAdjacente().getId() + " ");
             }
             System.out.println("]");
 	}
@@ -107,7 +107,7 @@ public class Grafo{
             first.setCor("P");
 
             for(Aresta aresta : collection){        //Vendo se o vertice procurado é adjacente aqui
-                if(aresta.getVerticeAdjacente().getId().equals(k)){
+                if(aresta.getAdjacente().getId().equals(k)){
                     int value = first.getDistancia()+1;
                     resetColor(null);
                     return value;
@@ -115,7 +115,7 @@ public class Grafo{
             }
 
             for(Aresta aresta : collection){
-                Vertice v = aresta.getVerticeAdjacente();
+                Vertice v = aresta.getAdjacente();
 
                 if(v.getCor().equals("B")){
                     v.setDistancia(first.getDistancia()+1);
@@ -148,7 +148,7 @@ public class Grafo{
         vertice.setCor("C");
 
         for (Aresta aresta : grafo.get(vertice)) {
-            Vertice v = aresta.getVerticeAdjacente();
+            Vertice v = aresta.getAdjacente();
             if(v.getCor().equals("B"))
                 tempo = buscaProfundidade(v, lista);
         }
@@ -194,7 +194,7 @@ public class Grafo{
         root.setCor("C");
         for (Aresta aresta : mst.get(root)) {
 
-            Vertice vertice = aresta.getVerticeAdjacente();
+            Vertice vertice = aresta.getAdjacente();
 
             if(vertice.equals(adjacente)){
                 continue;
@@ -213,7 +213,7 @@ public class Grafo{
             }
 
             for (Aresta aresta : mst.get(vertice)) {
-                Vertice v = aresta.getVerticeAdjacente();
+                Vertice v = aresta.getAdjacente();
 
                 if(v.equals(adjacente)){
                     resetColor(mst);
@@ -282,10 +282,10 @@ public class Grafo{
                         Vertice vertice2 = null;
                         Aresta aresta2 = null;
                         if(isGrafo){                                //se for um grafo, faremos umas operacoes a mais para o algoritmo funcionar melhor. Dentre elas, a inserção das duas aresta que são mapeadas pelo para de vértices
-                            vertice2 = aresta1.getVerticeAdjacente();   //recuperando o vértice adjacente
+                            vertice2 = aresta1.getAdjacente();   //recuperando o vértice adjacente
 
                             for (Aresta aresta : grafo.get(vertice2)) { //recuperando a outra aresta
-                                if(aresta.getVerticeAdjacente().equals(vertice1)){
+                                if(aresta.getAdjacente().equals(vertice1)){
                                     aresta2 = aresta;
                                     break;
                                 }
@@ -324,6 +324,107 @@ public class Grafo{
         }
 
         return mst;
+    }
+
+    private Vertice getNextPrim(LinkedList<Vertice> list){
+
+        Vertice next = list.get(0);
+        int posNext = 0;
+        int pos = 0;
+        for (Vertice vertice : list) {
+            if(vertice.getPrim() < next.getPrim()){
+                next = vertice;
+                posNext = pos;
+            }
+
+            pos ++;
+        }
+
+        list.remove(posNext);
+        return next;
+    }
+
+    private Vertice getAdjacentePrim(HashMap<Vertice, ArrayList<Aresta>> mst, Vertice vertice){
+        for (Vertice v : mst.keySet()) {
+            for(Aresta aresta : grafo.get(v)){
+                if(aresta.getAdjacente().equals(vertice) && aresta.getPeso() == vertice.getPrim()){ //tem que saber o valor da aresta, pois o vertice pode ter mais de um adjacente e acontecer de recuperar o errado
+                    return v;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public HashMap<Vertice, ArrayList<Aresta>> prim(){
+        HashMap<Vertice, ArrayList<Aresta>> mst = new HashMap<>();
+
+        LinkedList<Vertice> list = new LinkedList<>();
+        for (Vertice vertice : grafo.keySet()) {
+            list.add(vertice);
+        }
+
+        int n = list.size();
+        Vertice vertice1 = list.removeFirst();
+        vertice1.setPrim(0);
+
+        while(true){         //como o proximo vertice é recuperado lá em baixo, aqui é melhor deixar como true
+
+            mst.put(vertice1, new ArrayList<>());                   //adicionando o vertice na MST
+
+            //atualizando todos os adjacentes do 'vertice1'
+            for (Aresta aresta : grafo.get(vertice1)) {             //iterando em todos os adjacentes
+                if(mst.containsKey(aresta.getAdjacente())){         //se já tiver na MST
+                    continue;
+                }
+
+                if(aresta.getPeso() < aresta.getAdjacente().getPrim()){     //se o valor for menor do que o atual
+                    aresta.getAdjacente().setPrim(aresta.getPeso());        //atualiza o valor
+                }
+            }
+
+            if(mst.size() == 1){            //quando size é igual a 1, não tem mais o que fazer, somente voltar ao inicio
+                vertice1 = getNextPrim(list);
+                continue;
+            }
+
+            Vertice vertice2 = getAdjacentePrim(mst, vertice1);     //recuperando o vertice adjacente ao 'vertice1' para o adicionar na MST
+
+            Aresta aresta1 = null;
+            Aresta aresta2 = null;
+            for (Aresta aresta : grafo.get(vertice1)) {     //recuperando a primeira aresta, pois mesmo se for um digrafo, precisaremos dela
+                if(aresta.getAdjacente().equals(vertice2)){
+                    aresta1 = aresta;
+                    break;
+                }
+            }
+
+            if(isGrafo){        //se for um grafo, já recupera a segunda aresta
+                for (Aresta aresta : grafo.get(vertice2)) {
+                    if(aresta.getAdjacente().equals(vertice1)){
+                        aresta2 = aresta;
+                        break;
+                    }
+                }
+
+                mst.get(vertice2).add(aresta2);     //já adiciona a aresta aqui
+            }
+
+            mst.get(vertice1).add(aresta1);         //adicionando a primeira aresta
+
+            if(containsCycle(vertice1, vertice2, mst)){     //se gerou um ciclo, então desfaz
+                mst.get(vertice1).remove(aresta1);
+                if(isGrafo){
+                    mst.get(vertice2).remove(aresta2);
+                }
+            }
+
+            if(mst.size() == n){    //não tem mais vertice para recuperar
+                return mst;
+            }
+
+            vertice1 = getNextPrim(list);       //recupera o proximo vertice e volta para o começo
+        }
     }
 
 }

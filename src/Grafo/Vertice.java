@@ -15,12 +15,14 @@ public class Vertice {
     private String cor;
     private int distancia;
     private int tempo;
+    private int prim;
 
     public Vertice(String id) {
         this.id = id;
         cor = "B";
         tempo = 0;
         distancia = -1;
+        prim = Integer.MAX_VALUE;
     }
 
     public String getId() {
@@ -49,6 +51,19 @@ public class Vertice {
 
     public void setDistancia(int distancia) {
         this.distancia = distancia;
+    }
+
+    public int getPrim() {
+        return prim;
+    }
+
+    public void setPrim(int prim) {
+        this.prim = prim;
+    }
+
+    @Override
+    public String toString(){
+        return id;
     }
 
 }
