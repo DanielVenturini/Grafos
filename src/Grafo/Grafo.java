@@ -364,6 +364,7 @@ public class Grafo{
             list.add(vertice);
         }
 
+        System.out.println(list);
         int n = list.size();
         Vertice vertice1 = list.removeFirst();
         vertice1.setPrim(0);
@@ -371,8 +372,10 @@ public class Grafo{
         while(true){         //como o proximo vertice é recuperado lá em baixo, aqui é melhor deixar como true
 
             mst.put(vertice1, new ArrayList<>());                   //adicionando o vertice na MST
+            System.out.println("ADICIONADO O VERTICE " + vertice1);
 
             //atualizando todos os adjacentes do 'vertice1'
+            System.out.println("  ATUALIZANDO OS ADJACENTES");
             for (Aresta aresta : grafo.get(vertice1)) {             //iterando em todos os adjacentes
                 if(mst.containsKey(aresta.getAdjacente())){         //se já tiver na MST
                     continue;
@@ -388,34 +391,49 @@ public class Grafo{
                 continue;
             }
 
-            Vertice vertice2 = getAdjacentePrim(mst, vertice1);     //recuperando o vertice adjacente ao 'vertice1' para o adicionar na MST
+            //na verdade, o vertice2 é que mapeia o vertice1
+            Vertice vertice2 = getAdjacentePrim(mst, vertice1);     //recuperando o vertice adjacente ao 'vertice1' para o adicionar na 
+            System.out.println("  RECUPERADO O ADJACENTE " + vertice2);
+            if(vertice2 == null){       //quando for um digrafo, pode ser que ninguem esteja mapeando o vertice2
+                if(list.size() == 0){
+                    return mst;
+                }
+                vertice1 = getNextPrim(list);
+                continue;
+            }
 
+            if(!mst.containsKey(vertice2)){
+                mst.put(vertice2, new ArrayList<>());
+            }
+ 
             Aresta aresta1 = null;
             Aresta aresta2 = null;
-            for (Aresta aresta : grafo.get(vertice1)) {     //recuperando a primeira aresta, pois mesmo se for um digrafo, precisaremos dela
-                if(aresta.getAdjacente().equals(vertice2)){
-                    aresta1 = aresta;
+            //quando é um digrafo, as arestas estão invertidas, então sempre vamos precisar da aresta2
+            for (Aresta aresta : grafo.get(vertice2)) {
+                if(aresta.getAdjacente().equals(vertice1)){
+                    aresta2 = aresta;
                     break;
                 }
             }
 
-            if(isGrafo){        //se for um grafo, já recupera a segunda aresta
-                for (Aresta aresta : grafo.get(vertice2)) {
-                    if(aresta.getAdjacente().equals(vertice1)){
-                        aresta2 = aresta;
+            mst.get(vertice2).add(aresta2);     //já adiciona a aresta aqui
+
+            if(isGrafo){        //se for um grafo, já recupera a aresta que é a mesma, só que mapeando do 'outro lado'
+                for (Aresta aresta : grafo.get(vertice1)) {     //recuperando a primeira aresta, pois mesmo se for um digrafo, precisaremos dela
+                    if(aresta.getAdjacente().equals(vertice2)){
+                        aresta1 = aresta;
                         break;
                     }
                 }
-
-                mst.get(vertice2).add(aresta2);     //já adiciona a aresta aqui
+                mst.get(vertice1).add(aresta1);         //adicionando a primeira aresta
             }
 
-            mst.get(vertice1).add(aresta1);         //adicionando a primeira aresta
+            System.out.println("  ADICIONADO A ARESTA [" + vertice2.getId() + "," + vertice1.getId() + "]");
+            if(containsCycle(vertice2, vertice1, mst)){     //se gerou um ciclo, então desfaz
+                mst.get(vertice2).remove(aresta2);
 
-            if(containsCycle(vertice1, vertice2, mst)){     //se gerou um ciclo, então desfaz
-                mst.get(vertice1).remove(aresta1);
                 if(isGrafo){
-                    mst.get(vertice2).remove(aresta2);
+                    mst.get(vertice1).remove(aresta1);
                 }
             }
 
