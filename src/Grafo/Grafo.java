@@ -445,4 +445,111 @@ public class Grafo{
         }
     }
 
+    private HashMap<Vertice, ArrayList> getDistancias(){
+        HashMap<Vertice, ArrayList> distancias = new HashMap<>();
+
+        for (Vertice vertice : grafo.keySet()) {
+            distancias.put(vertice, new ArrayList(2));
+            distancias.get(vertice).add(0, Integer.MAX_VALUE);
+            distancias.get(vertice).add(1, -1);
+        }
+
+        return distancias;
+    }
+
+    private void printDijkstra(HashMap<Vertice, ArrayList> dijkstra){
+        for (Vertice vertice : dijkstra.keySet()) {
+            System.out.println(vertice + "-> distancia: " + dijkstra.get(vertice).get(0) + "; predecessor: " + dijkstra.get(vertice).get(1));
+        }
+    }
+
+    private Vertice getNextDijkstra(HashMap<Vertice, ArrayList> dijkstra){
+
+        int minimo = Integer.MAX_VALUE;
+        Vertice v = null;
+        for (Vertice vertice : dijkstra.keySet()) {
+            if(!vertice.getCor().equals("P") && (Integer) dijkstra.get(vertice).get(0) <= minimo){
+                minimo = (Integer) dijkstra.get(vertice).get(0);
+                v = vertice;
+            }
+        }
+
+        return v;
+    }
+    
+    private HashMap<Vertice, ArrayList<Aresta>> makeDijkstra(Vertice filho, HashMap<Vertice, ArrayList> dijkstra){
+
+        HashMap<Vertice, ArrayList<Aresta>> mst = new HashMap<>();
+
+        Vertice pai = filho;
+        while(dijkstra.get(filho).get(1) != Integer.valueOf(-1)){
+
+            pai = (Vertice) dijkstra.get(filho).get(1);       //recuperando o adjacente
+            int distancia = (Integer) dijkstra.get(filho).get(0);
+
+            mst.put(pai, new ArrayList());
+            mst.get(pai).add(new Aresta(filho, distancia));
+
+            if(dijkstra.get(pai).get(1) == Integer.valueOf(-1)){
+                return mst;
+            }
+
+            filho = pai;
+            pai = (Vertice) dijkstra.get(pai).get(1);
+        }
+
+        return mst;
+    }
+
+    public HashMap<Vertice, ArrayList<Aresta>> dijkstra(String v){
+
+        HashMap<Vertice, ArrayList> dijkstra = getDistancias();
+        Vertice ultimo;
+
+        Vertice inicial = null;
+        for (Vertice vertice : grafo.keySet()) {
+            if(vertice.getId().equals(v)){
+                inicial = vertice;
+                break;
+            }
+        }
+
+        if(inicial == null){
+            return null;
+        }
+
+        dijkstra.get(inicial).add(0, 0);    //setando o tempo
+        dijkstra.get(inicial).add(1, Integer.valueOf(-1));
+        Vertice u = inicial;
+
+        for(int i = 0; i < grafo.size(); i ++){
+            u.setCor("P");
+
+            System.out.println("");
+            System.out.println("Iterando nos adjacentes de " + u);
+            System.out.print("Relaxando ");
+            for (Aresta aresta : grafo.get(u)) {                //iterando nos adjacentes
+                if(aresta.getAdjacente().getCor().equals("P")){
+                    continue;
+                }
+
+                System.out.print(aresta.getAdjacente() + " ");
+                int peso = (Integer) dijkstra.get(u).get(0)+aresta.getPeso();
+                if(peso < (Integer) dijkstra.get(aresta.getAdjacente()).get(0)){    //relaxando o vertice
+                    dijkstra.get(aresta.getAdjacente()).add(0, peso);
+                    dijkstra.get(aresta.getAdjacente()).add(1, u);
+                }
+            }
+
+            ultimo = u;
+            System.out.println("");
+            u = getNextDijkstra(dijkstra);
+            if(u == null){
+                return makeDijkstra(ultimo, dijkstra);
+            }
+            System.out.println("Novo vertice recuperado " + u);
+        }
+
+    return null;
+    }
 }
