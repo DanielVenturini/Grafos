@@ -16,6 +16,7 @@ public class Vertice {
     private int distancia;
     private int tempo;
     private int prim;
+    private Vertice predecessor;
 
     public Vertice(String id) {
         this.id = id;
@@ -23,6 +24,7 @@ public class Vertice {
         tempo = 0;
         distancia = -1;
         prim = Integer.MAX_VALUE;
+        predecessor = null;
     }
 
     public String getId() {
@@ -64,6 +66,14 @@ public class Vertice {
     @Override
     public String toString(){
         return id;
+    }
+
+    public Vertice getPredecessor() {
+        return predecessor;
+    }
+
+    public void setPredecessor(Vertice predecessor) {
+        this.predecessor = predecessor;
     }
 
 }
